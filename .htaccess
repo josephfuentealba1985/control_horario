@@ -1,0 +1,8 @@
+DirectoryIndex index.php
+Options -Indexes
+<FilesMatch "^(config|clave-instalacion)\.php$">
+    Require all denied
+</FilesMatch>
+<FilesMatch "\.(sql|log|ini|bak|zip|md)$">
+    Require all denied
+</FilesMatch>
