@@ -1,5 +1,5 @@
 'use strict';
-const CACHE = 'control-horario-public-v1.0.0';
+const CACHE = 'control-horario-public-v1.1.0';
 const PUBLIC = ['assets/style.css','assets/app.js','assets/icon-192.png','assets/icon-512.png','logo.png','offline.html'];
 const publicURLs = new Set(PUBLIC.map(path => new URL(path,self.registration.scope).href));
 self.addEventListener('install', event => {

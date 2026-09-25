@@ -39,3 +39,8 @@ El hosting real todavía no está configurado. Tras subir los archivos:
 6. Descargar un Excel y un PDF, y comprobar que el panel del hosting permite respaldar la base.
 
 Las pruebas locales de marcado usaron coordenadas simuladas; no se recogió ubicación real de una persona. La revisión móvil comprobó el diseño responsive en el navegador, no un dispositivo físico. Las reglas Apache `.htaccess` se entregan para el hosting y no son ejecutadas por el servidor de desarrollo PHP.
+
+## Actualización 1.1
+
+118 comprobaciones satisfactorias: 68 de importación/justificaciones y 50 de regresión, incluida instalación nueva. Actualización de una base anterior conservando datos, importación real en base aislada, conflictos, permisos, trazabilidad, metas sin descuento por justificaciones y exportaciones XLSX/PDF verificadas. Consulta ACTUALIZACION-1.1.md para el alcance y la limitación de visualización del mapa integrado en el navegador de pruebas.
+

@@ -84,7 +84,7 @@ Sin conexión se muestra una pantalla informativa. **No se guardan marcados pend
 - Marcados y cambios se confirman en transacciones. Restricción única persona/fecha y control de versión para evitar sobrescribir correcciones simultáneas.
 - Ubicaciones originales separadas de los horarios corregidos.
 - La auditoría es ineditable desde la aplicación. Un operador con acceso directo a la base de datos sí tiene control técnico sobre ella.
-- No contiene servicios externos de analítica, tipografías remotas, dependencias CDN ni claves de API. El mapa externo se abre sólo si el analista pulsa el enlace.
+- No contiene servicios externos de analítica, tipografías remotas, dependencias CDN ni claves de API. Los mapas integrados consultan OpenStreetMap al cargar la evidencia e incluyen sus coordenadas. Se conserva el enlace externo.
 - Mantén respaldos periódicos de la base mediante el panel del hosting y conserva una copia privada de `config.php` y de los archivos del proyecto. Guarda los respaldos fuera del directorio público.
 - Para trasladar la instalación, copia archivos y base, y ajusta los datos privados de `config.php` desde el panel. No ejecutes el instalador sobre una base ya utilizada.
 - Al actualizar assets, cambia la versión de `CACHE` en `sw.js` para renovar la caché pública.
@@ -107,3 +107,7 @@ Sin conexión se muestra una pantalla informativa. **No se guardan marcados pend
 | `logo.png` | Logo LOOPERS original proporcionado |
 
 Compatible con PHP 8.2.33 y MariaDB 10.11.13. La validación local se documenta en `VALIDACION.md`. La puesta en marcha final requiere los datos reales de MySQL del hosting y una prueba de ubicación en los dispositivos de uso.
+
+## Actualización 1.1
+
+Incluye importación de asistencia XLSX por persona, solicitudes de justificación y mapas integrados. Consulta ACTUALIZACION-1.1.md para actualizar una instalación existente desde el navegador, sin reinstalar.

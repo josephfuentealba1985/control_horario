@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 require_once __DIR__.'/core.php';
+require_once __DIR__.'/features.php';
 ini_set('display_errors','0');
 ini_set('session.use_strict_mode','1');
 ini_set('session.use_only_cookies','1');
@@ -18,7 +19,7 @@ header('X-Content-Type-Options: nosniff');
 header('Referrer-Policy: same-origin');
 header('X-Frame-Options: DENY');
 header('Permissions-Policy: geolocation=(self), camera=(), microphone=()');
-header("Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'");
+header("Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; font-src 'self'; frame-src https://www.openstreetmap.org; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'");
 if($secure) header('Strict-Transport-Security: max-age=31536000');
 if(isset($_SESSION['uid']) && (time()-($_SESSION['last_seen']??0)>1800 || time()-($_SESSION['started']??0)>43200)) { $_SESSION=[]; session_regenerate_id(true); flash('Tu sesión caducó. Inicia sesión nuevamente.','info'); }
 $_SESSION['last_seen']=time();

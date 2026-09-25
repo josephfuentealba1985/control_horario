@@ -45,6 +45,7 @@ function punch_action(array $user): void {
         row('SELECT id FROM ch_users WHERE id=? FOR UPDATE',[$user['id']]);
         $now=utc_now(); $date=local_time($now,'Y-m-d');
         if($date<$user['start_date']) throw new DomainException('Tu fecha de inicio todavía no ha llegado.');
+        block_approved_absence((int)$user['id'],$date);
         $a=row('SELECT * FROM ch_attendance WHERE user_id=? AND work_date=? FOR UPDATE',[$user['id'],$date]);
         if($a && $a['voided']) throw new DomainException('El registro de hoy está anulado. Solicita su revisión al administrador.');
         if($kind==='in') {
@@ -77,6 +78,7 @@ function correction_action(array $actor): void {
     try {
         $target=row('SELECT * FROM ch_users WHERE id=? FOR UPDATE',[$uid]);
         if(!$target || $date<$target['start_date']) throw new DomainException('La persona o su fecha de inicio no permiten este registro.');
+        if(!$void) block_approved_absence($uid,$date);
         $before=row('SELECT * FROM ch_attendance WHERE user_id=? AND work_date=? FOR UPDATE',[$uid,$date]);
         if(($before && (int)$before['revision']!==(int)($_POST['revision']??0)) || (!$before && (int)($_POST['revision']??0)!==0)) throw new DomainException('Otra persona modificó este registro. Vuelve a abrirlo antes de guardar.');
         if($before && $before['voided'] && $actor['role']!=='admin') throw new DomainException('Sólo un administrador puede restablecer un registro anulado.');
@@ -140,6 +142,7 @@ function user_action(array $actor): void {
         }
         if(row('SELECT id FROM ch_users WHERE rut=? AND id<>?',[$rut,$id])) throw new DomainException('El RUT ya está registrado.');
         if($before && row('SELECT id FROM ch_attendance WHERE user_id=? AND work_date<? LIMIT 1',[$id,$start])) throw new DomainException('La fecha de inicio no puede dejar registros anteriores fuera del historial.');
+        if($before && features_ready() && row('SELECT id FROM ch_absences WHERE user_id=? AND work_date<? LIMIT 1',[$id,$start])) throw new DomainException('La fecha de inicio no puede dejar solicitudes anteriores fuera del historial.');
         $params=[$rut,$name,$email,$phone,$address,$institution,$position,$department,$role,$active,$start];
         if($before) {
             query('UPDATE ch_users SET rut=?,name=?,email=?,phone=?,address=?,institution=?,position=?,department=?,role=?,active=?,start_date=?,session_version=session_version+1 WHERE id=?',[...$params,$id]);
