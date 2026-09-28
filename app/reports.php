@@ -14,7 +14,7 @@ function report_filters(array $actor): array {
 }
 
 function report_data(array $filters): array {
-    $users=rows('SELECT id,rut,name,active,start_date,institution,position FROM ch_users '.($filters['user_id']?'WHERE id=? ':'').'ORDER BY name',$filters['user_id']?[$filters['user_id']]:[]);
+    $users=rows('SELECT id,rut,name,active,start_date,institution,position FROM ch_users WHERE role=\'user\' '.($filters['user_id']?'AND id=? ':'').'ORDER BY name',$filters['user_id']?[$filters['user_id']]:[]);
     $holidays=array_column(rows('SELECT * FROM ch_holidays WHERE date BETWEEN ? AND ?',[$filters['from'],$filters['to']]),'name','date');
     $origin=features_ready()?'EXISTS(SELECT 1 FROM ch_import_items i WHERE i.attendance_id=a.id)':'0';
     $records=rows('SELECT a.*,'.$origin.' AS imported FROM ch_attendance a WHERE work_date BETWEEN ? AND ?'.($filters['user_id']?' AND user_id=?':''),$filters['user_id']?[$filters['from'],$filters['to'],$filters['user_id']]:[$filters['from'],$filters['to']]);

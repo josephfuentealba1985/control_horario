@@ -111,3 +111,8 @@ Compatible con PHP 8.2.33 y MariaDB 10.11.13. La validación local se documenta 
 ## Actualización 1.1
 
 Incluye importación de asistencia XLSX por persona, solicitudes de justificación y mapas integrados. Consulta ACTUALIZACION-1.1.md para actualizar una instalación existente desde el navegador, sin reinstalar.
+
+## Actualización 1.2
+
+Revisión unificada de ubicaciones, eliminación de referencias automáticas al origen de los registros y edición de coordenadas exclusiva del administrador, con motivo y trazabilidad. Consulta ACTUALIZACION-1.2.md. No requiere cambios de tablas sobre la versión 1.1.
+

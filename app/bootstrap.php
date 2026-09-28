@@ -2,6 +2,7 @@
 declare(strict_types=1);
 require_once __DIR__.'/core.php';
 require_once __DIR__.'/features.php';
+require_once __DIR__.'/locations.php';
 ini_set('display_errors','0');
 ini_set('session.use_strict_mode','1');
 ini_set('session.use_only_cookies','1');

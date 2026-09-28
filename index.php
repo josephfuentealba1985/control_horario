@@ -8,7 +8,8 @@ require __DIR__.'/app/views.php';
 require __DIR__.'/app/import.php';
 require __DIR__.'/app/feature-views.php';
 $user=current_user();
-$page=is_string($_GET['page']??null)?$_GET['page']:'dashboard';
+$home=$user && $user['role']!=='user'?'overview':'dashboard';
+$page=is_string($_GET['page']??null)?$_GET['page']:$home;
 if($_SERVER['REQUEST_METHOD']==='POST') {
     try {
         check_csrf(); $action=text_input('action',40,true);
@@ -21,7 +22,7 @@ if($_SERVER['REQUEST_METHOD']==='POST') {
             header('Content-Type: application/json; charset=utf-8'); echo json_encode(['token'=>$_SESSION['punch_challenge']['token']]); exit;
         }
         match($action) {
-            'punch'=>punch_action($user), 'correct'=>correction_action($user), 'profile'=>profile_action($user),
+            'coordinates'=>coordinates_action($user), 'punch'=>punch_action($user), 'correct'=>correction_action($user), 'profile'=>profile_action($user),
             'user'=>user_action($user), 'schedule'=>schedule_action($user), 'reset'=>reset_action($user),
             'settings'=>settings_action($user), 'holiday'=>holiday_action($user), 'remove_holiday'=>holiday_action($user,true),
             'import_preview'=>import_preview_action($user), 'import_confirm'=>import_confirm_action($user),
@@ -34,11 +35,12 @@ if($_SERVER['REQUEST_METHOD']==='POST') {
     }
 }
 if(!$user) { login_view(); exit; }
+if($user['role']!=='user' && in_array($page,['dashboard','history','absences'],true)) $page='overview';
 if($user['must_change']) $page='profile';
-$allowed=['dashboard','history','profile','absences'];
+$allowed=$user['role']==='user'?['dashboard','history','profile','absences']:['profile'];
 if(in_array($user['role'],['admin','analyst'],true)) $allowed=[...$allowed,'overview','reports','edit','requests'];
 if($user['role']==='admin') $allowed=[...$allowed,'users','user','settings','audit','import'];
-if(!in_array($page,$allowed,true)) { http_response_code(403); flash('No tienes acceso a esta sección.','error'); $page='dashboard'; }
+if(!in_array($page,$allowed,true)) { http_response_code(403); flash('No tienes acceso a esta sección.','error'); $page=$home; }
 page_start($user,$page);
 if($user['role']==='admin' && !features_ready()) echo '<div class="notice warning">Hay nuevas funciones disponibles. <a href="update.php">Actualizar sistema</a> para habilitar importaciones y justificaciones, conservando los registros actuales.</div>';
 try {

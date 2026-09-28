@@ -44,3 +44,8 @@ Las pruebas locales de marcado usaron coordenadas simuladas; no se recogió ubic
 
 118 comprobaciones satisfactorias: 68 de importación/justificaciones y 50 de regresión, incluida instalación nueva. Actualización de una base anterior conservando datos, importación real en base aislada, conflictos, permisos, trazabilidad, metas sin descuento por justificaciones y exportaciones XLSX/PDF verificadas. Consulta ACTUALIZACION-1.1.md para el alcance y la limitación de visualización del mapa integrado en el navegador de pruebas.
 
+
+## Actualización 1.2 · 28 de septiembre de 2026
+
+28 comprobaciones automáticas satisfactorias de permisos, coordenadas, concurrencia, preservación de horas y evidencias, y presentación de registros sin referencias al archivo de origen. Reportes XLSX/PDF comprobados con lectores independientes. Consulta ACTUALIZACION-1.2.md.
+
