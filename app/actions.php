@@ -28,6 +28,7 @@ function login_action(): void {
 }
 
 function punch_action(array $user): void {
+    require_role($user,['user']);
     $kind=text_input('kind',3,true);
     if(!in_array($kind,['in','out'],true)) throw new DomainException('Marcado no válido.');
     $coords=[];
@@ -124,7 +125,8 @@ function user_action(array $actor): void {
     $id=(int)($_POST['user_id']??0); $rut=normalize_rut(text_input('rut',30,true));
     if(!rut_valid($rut)) throw new DomainException('El RUT no es válido. Revisa su dígito verificador.');
     $name=text_input('name',150,true); $role=text_input('role',10,true); $active=isset($_POST['active'])?1:0;
-    if(!in_array($role,['admin','analyst','user'],true)) throw new DomainException('Perfil no válido.');
+    if(!in_array($role,['admin','analyst','user','auditor'],true)) throw new DomainException('Perfil no válido.');
+    if($role==='auditor' && !security_ready()) throw new DomainException('Actualiza la base de datos antes de crear un Auditor.');
     $email=text_input('email',180); if($email!=='' && !filter_var($email,FILTER_VALIDATE_EMAIL)) throw new DomainException('El correo no es válido.');
     $phone=text_input('phone',40); $address=text_input('address',250); $institution=text_input('institution',180); $position=text_input('position',150); $department=text_input('department',150);
     $start=text_input('start_date',10,true); if(!date_ok($start)) throw new DomainException('Fecha de inicio no válida.');

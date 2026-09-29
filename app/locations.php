@@ -59,6 +59,7 @@ function locations_view(array $actor,?array $record): void {
         }
         echo '</article>';
     }
+    punch_context_view((int)$record['id']);
     if($actor['role']!=='admin') return;
     echo '<hr><h3>Modificar coordenadas</h3><p class="small muted">Los cambios requieren un motivo y quedan en el historial. Para quitar una ubicación, deja ambos campos vacíos.</p><form method="post" class="stack">'.csrf_field().'<input type="hidden" name="action" value="coordinates"><input type="hidden" name="attendance_id" value="'.(int)$record['id'].'"><input type="hidden" name="revision" value="'.(int)$record['revision'].'">';
     foreach(['in'=>'Ingreso','out'=>'Salida'] as $kind=>$label) {
@@ -68,6 +69,33 @@ function locations_view(array $actor,?array $record): void {
         echo '</div></fieldset>';
     }
     echo '<label>Motivo del cambio de coordenadas<textarea name="reason" maxlength="1000" rows="3" required></textarea></label><button class="button primary">Guardar coordenadas</button></form>';
+}
+
+function user_locations_view(array $actor,?string $date=null): void {
+    require_role($actor,['user']);
+    $date=$date??(is_string($_GET['date']??null)?$_GET['date']:today());
+    if(!date_ok($date) || $date>today()) throw new DomainException('Selecciona una fecha válida que no sea futura.');
+    // Always scope to the signed-in user, never to a supplied person or record ID.
+    $record=row('SELECT * FROM ch_attendance WHERE user_id=? AND work_date=?',[$actor['id'],$date]);
+    echo '<section class="panel user-locations"><h2>Mis ubicaciones · '.e(date_label($date)).'</h2>';
+    if(!$record) { echo '<p class="small muted">Todavía no tienes un marcado registrado para este día.</p></section>'; return; }
+    if($record['voided']) echo '<p class="notice warning">Este registro está anulado.</p>';
+    $locations=attendance_locations((int)$record['id']);
+    echo '<p class="small muted">Consulta las coordenadas guardadas de cada marcado. Esta consulta no solicita tu ubicación actual.</p><div class="location-grid">';
+    foreach(['in'=>'Entrada','out'=>'Salida'] as $kind=>$label) {
+        $point=$locations[$kind]; $time=$record['clock_'.$kind];
+        echo '<details><summary>'.e($label.' · '.local_time($time,'H:i:s')).'</summary>';
+        if(!$time) echo '<p class="small muted">Aún no has registrado la '.strtolower($label).'.</p>';
+        elseif($point['lat']===null || $point['lng']===null) echo '<p class="small muted">Sin coordenadas registradas.</p>';
+        else {
+            echo '<p class="small">Latitud: '.e($point['lat']).'<br>Longitud: '.e($point['lng']).'</p>';
+            map_view((float)$point['lat'],(float)$point['lng'],'Mi ubicación de '.$label);
+            $url='https://www.openstreetmap.org/?'.http_build_query(['mlat'=>$point['lat'],'mlon'=>$point['lng']]).'#map=16/'.$point['lat'].'/'.$point['lng'];
+            echo '<a href="'.e($url).'" target="_blank" rel="noopener noreferrer">Abrir ubicación en mapa ↗</a>';
+        }
+        echo '</details>';
+    }
+    echo '</div></section>';
 }
 
 function attendance_comment(?array $record): string {

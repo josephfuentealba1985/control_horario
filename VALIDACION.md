@@ -49,3 +49,16 @@ Las pruebas locales de marcado usaron coordenadas simuladas; no se recogió ubic
 
 28 comprobaciones automáticas satisfactorias de permisos, coordenadas, concurrencia, preservación de horas y evidencias, y presentación de registros sin referencias al archivo de origen. Reportes XLSX/PDF comprobados con lectores independientes. Consulta ACTUALIZACION-1.2.md.
 
+
+## Actualización 1.5 · 28 de septiembre de 2026
+
+31 comprobaciones satisfactorias sobre justificación por jefatura, permisos, conflictos, trazabilidad y cómputo de horas justificadas. Caso verificado: 17 trabajadas + 27 justificadas = 44 computadas, meta 44, diferencia 0. Formulario y reporte revisados en navegador; XLSX validado con lector independiente y PDF renderizado y revisado visualmente. Esta versión cambia la regla anterior para todas las ausencias aprobadas. Consulta ACTUALIZACION-1.5.md.
+
+
+## Actualización 1.6.0 · 29 de septiembre de 2026
+
+54 comprobaciones satisfactorias de actualización e instalación, permisos del Auditor, captura de conexión y exportación. IP de entrada/salida y datos del navegador comprobados con un lector XLSX independiente; PDF abierto con lector independiente. Login y datos de conexión revisados en navegador. PHP 8.2.33 y MariaDB 10.11.13. Datos y credenciales de prueba excluidos de la entrega. Consulta ACTUALIZACION-1.6.md.
+
+## Actualización 1.7.0
+
+Marcado prioritario y compacto en móvil; consulta de las ubicaciones propias de entrada y salida en Mi jornada y Mi historial. Nueve comprobaciones de integración satisfactorias y revisión móvil a 390 × 700. Consulta ACTUALIZACION-1.7.md.

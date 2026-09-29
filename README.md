@@ -35,7 +35,7 @@ Si utilizas un proxy/CDN que termina HTTPS, configura en el hosting la detecció
 
 ### Analista
 
-- **Vista general** muestra la asistencia de todas las personas activas, incluidos analistas y administradores.
+- **Vista general** muestra la asistencia de las personas activas con perfil Usuario.
 - **Reportes** permite filtrar por persona y fechas, consultar cómputos semanales y descargar Excel `.xlsx` o PDF.
 - **Revisar** permite corregir un registro existente o crear uno faltante. El motivo es obligatorio. No se atribuye ubicación a registros ingresados manualmente.
 - Cada revisión permite consultar evidencia geográfica original y el historial de cambios del registro.
@@ -116,3 +116,16 @@ Incluye importación de asistencia XLSX por persona, solicitudes de justificaci�
 
 Revisión unificada de ubicaciones, eliminación de referencias automáticas al origen de los registros y edición de coordenadas exclusiva del administrador, con motivo y trazabilidad. Consulta ACTUALIZACION-1.2.md. No requiere cambios de tablas sobre la versión 1.1.
 
+
+## Actualización 1.5 · Horas justificadas
+
+Analistas y administradores pueden registrar justificaciones aprobadas por jefatura desde Revisión de marcado, con motivo y trazabilidad. Todas las ausencias aprobadas, incluidas las anteriores, cubren el horario individual como horas justificadas. Computadas = trabajadas + justificadas; diferencia = computadas menos meta. Consulta ACTUALIZACION-1.5.md: esta regla reemplaza el cómputo de ausencias de versiones anteriores.
+
+
+## Actualización 1.6.0 · Auditor, conexión y versión
+
+IP y datos del navegador en los nuevos marcados, perfil Auditor de consulta y exportación, y versión visible en el login y pie de la aplicación. El Auditor puede cambiar únicamente su propio contacto y contraseña. Requiere actualizar la base mediante `update.php` como administrador después de subir los archivos. Consulta ACTUALIZACION-1.6.md.
+
+## Actualización 1.7.0
+
+Marcado prioritario y compacto en móvil; consulta de las ubicaciones propias de entrada y salida en Mi jornada y Mi historial. Nueve comprobaciones de integración satisfactorias y revisión móvil a 390 × 700. Consulta ACTUALIZACION-1.7.md.

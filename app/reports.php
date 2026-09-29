@@ -25,7 +25,7 @@ function report_data(array $filters): array {
     $bySchedule=[]; foreach($versions as $version) $bySchedule[$version['user_id']][]=['from'=>$version['effective_from'],'days'=>json_decode($version['days_json'],true)];
     $details=[]; $summaries=[]; $weeks=[]; $today=today();
     foreach($users as $user) {
-        $total=0; $expected=0; $pending=0; $absent=0; $noSchedule=false;
+        $total=0; $justifiedTotal=0; $expected=0; $pending=0; $absent=0; $noSchedule=false;
         foreach(new DatePeriod(new DateTimeImmutable($filters['from']),new DateInterval('P1D'),(new DateTimeImmutable($filters['to']))->modify('+1 day')) as $day) {
             $date=$day->format('Y-m-d'); if($date<$user['start_date']) continue;
             $days=[]; foreach($bySchedule[$user['id']]??[] as $v) { if($v['from']>$date) break; $days=$v['days']; }
@@ -38,13 +38,14 @@ function report_data(array $filters): array {
             $late=$valid && $scheduled && !$holiday?max(0,clock_minutes(local_time($record['clock_in']))-clock_minutes($scheduled[0])):0;
             if(!$valid && $absence && $absence['status']==='approved')$state='Justificada';
             elseif(!$valid && $absence && $absence['status']==='pending')$state='Justificación pendiente';
-            $item=['user_id'=>$user['id'],'name'=>$user['name'],'rut'=>$user['rut'],'date'=>$date,'scheduled'=>$scheduled?implode(' – ',$scheduled):($days?'Descanso':'Sin horario'),'expected'=>$planned,'minutes'=>$minutes,'late'=>$late,'status'=>$state,'holiday'=>$holiday,'record'=>$record,'absence'=>$absence];
-            $details[]=$item; $total+=$minutes; $expected+=$planned; $pending+=(int)($valid && !$record['clock_out']); $absent+=(int)($state==='Sin marcado'); $noSchedule=$noSchedule || !$days;
+            $justified=!$valid && $absence && $absence['status']==='approved'?$planned:0;
+            $item=['justified'=>$justified,'credited'=>$minutes+$justified,'user_id'=>$user['id'],'name'=>$user['name'],'rut'=>$user['rut'],'date'=>$date,'scheduled'=>$scheduled?implode(' – ',$scheduled):($days?'Descanso':'Sin horario'),'expected'=>$planned,'minutes'=>$minutes,'late'=>$late,'status'=>$state,'holiday'=>$holiday,'record'=>$record,'absence'=>$absence];
+            $details[]=$item; $total+=$minutes; $justifiedTotal+=$justified; $expected+=$planned; $pending+=(int)($valid && !$record['clock_out']); $absent+=(int)($state==='Sin marcado'); $noSchedule=$noSchedule || !$days;
             $week=$day->modify('monday this week')->format('Y-m-d'); $key=$user['id'].'_'.$week;
-            if(!isset($weeks[$key])) $weeks[$key]=['name'=>$user['name'],'rut'=>$user['rut'],'week'=>$week,'minutes'=>0,'expected'=>0,'pending'=>0,'unscheduled'=>false,'partial'=>max($filters['from'],$user['start_date'])>$week || $filters['to']<$day->modify('sunday this week')->format('Y-m-d')];
-            $weeks[$key]['minutes']+=$minutes; $weeks[$key]['expected']+=$planned; $weeks[$key]['pending']+=(int)($valid && !$record['clock_out']); $weeks[$key]['unscheduled']=$weeks[$key]['unscheduled'] || !$days;
+            if(!isset($weeks[$key])) $weeks[$key]=['name'=>$user['name'],'rut'=>$user['rut'],'week'=>$week,'minutes'=>0,'justified'=>0,'credited'=>0,'expected'=>0,'pending'=>0,'unscheduled'=>false,'partial'=>max($filters['from'],$user['start_date'])>$week || $filters['to']<$day->modify('sunday this week')->format('Y-m-d')];
+            $weeks[$key]['minutes']+=$minutes; $weeks[$key]['justified']+=$justified; $weeks[$key]['credited']+=$minutes+$justified; $weeks[$key]['expected']+=$planned; $weeks[$key]['pending']+=(int)($valid && !$record['clock_out']); $weeks[$key]['unscheduled']=$weeks[$key]['unscheduled'] || !$days;
         }
-        $summaries[]=['user'=>$user,'minutes'=>$total,'expected'=>$expected,'pending'=>$pending,'absent'=>$absent,'unscheduled'=>$noSchedule];
+        $summaries[]=['user'=>$user,'minutes'=>$total,'justified'=>$justifiedTotal,'credited'=>$total+$justifiedTotal,'expected'=>$expected,'pending'=>$pending,'absent'=>$absent,'unscheduled'=>$noSchedule];
     }
     return ['details'=>$details,'summaries'=>$summaries,'weeks'=>array_values($weeks)];
 }

@@ -12,12 +12,13 @@ if($_SERVER['REQUEST_METHOD']==='POST') {
         check_csrf(); $locked=(int)query('SELECT GET_LOCK(?,10)',[$lock])->fetchColumn()===1;
         if(!$locked) throw new DomainException('Otra actualización está en curso. Intenta nuevamente.');
         foreach(require __DIR__.'/app/feature-schema.php' as $sql) db()->exec($sql);
-        audit((int)$user['id'],'schema_update','system',2,null,['version'=>2],'Actualización de importación e inasistencias');
-        flash('Sistema actualizado. Ya puedes importar Excel y gestionar inasistencias.'); go();
+        if(!security_ready()) foreach(require __DIR__.'/app/security-schema.php' as $sql) db()->exec($sql);
+        audit((int)$user['id'],'schema_update','system',3,null,['version'=>3,'app_version'=>APP_VERSION],'Actualización de auditoría y datos de conexión');
+        flash('Sistema actualizado. Perfil Auditor y datos de conexión habilitados.'); go();
     } catch(Throwable $e) {
         error_log('Actualización control horario: '.$e->getMessage());
-        $error=$e instanceof DomainException?$e->getMessage():'No se completó la actualización. Revisa que el usuario MySQL tenga permiso para crear tablas. Puedes volver a intentarlo sin reinstalar ni borrar datos.';
+        $error=$e instanceof DomainException?$e->getMessage():'No se completó la actualización. Revisa que el usuario MySQL tenga permisos para crear y modificar tablas. Puedes volver a intentarlo sin reinstalar ni borrar datos.';
     } finally { if($locked) query('SELECT RELEASE_LOCK(?)',[$lock]); }
 }
 head('Actualizar sistema'); ?>
-<main class="install-shell"><section class="panel"><div class="eyebrow">ACTUALIZACIÓN 1.1</div><h1>Historial y justificaciones</h1><p>Esta actualización agrega las tablas de importaciones y solicitudes. Conserva personas, contraseñas, horarios y marcados.</p><p>Antes de continuar, conserva un respaldo de la base desde el panel de tu hosting.</p><?php if($error) echo '<div class="notice error">'.e($error).'</div>'; ?><form method="post"><?= csrf_field() ?><button class="button primary">Actualizar base de datos</button></form><p><a href="index.php">Volver al sistema</a></p></section></main><?php footer(); ?>
+<main class="install-shell"><section class="panel"><div class="eyebrow">ACTUALIZACIÓN <?= e(APP_VERSION) ?></div><h1>Auditoría y datos de conexión</h1><p>Esta actualización habilita el perfil Auditor y el almacenamiento de IP y datos del navegador en los eventos nuevos. Conserva personas, contraseñas, horarios y marcados.</p><p>Antes de continuar, conserva un respaldo de la base desde el panel de tu hosting.</p><?php if($error) echo '<div class="notice error">'.e($error).'</div>'; ?><form method="post"><?= csrf_field() ?><button class="button primary">Actualizar base de datos</button></form><p><a href="index.php">Volver al sistema</a></p></section></main><?php footer(); ?>

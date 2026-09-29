@@ -14,6 +14,7 @@ function block_approved_absence(int $user,string $date): void {
     if(approved_absence($user,$date)) throw new DomainException('Existe una inasistencia aprobada para ese día. Un administrador debe revocarla antes de registrar asistencia.');
 }
 function absence_request_action(array $actor): void {
+    require_role($actor,['user']);
     require_features(); $from=text_input('from',10,true); $to=text_input('to',10)?:$from; $category=text_input('category',20,true); $note=text_input('note',1000);
     if(!isset(absence_categories()[$category])) throw new DomainException('Selecciona un motivo de la lista.');
     if(!date_ok($from)||!date_ok($to)||$from>$to||$to>today()||$from<$actor['start_date']||(new DateTimeImmutable($from))->diff(new DateTimeImmutable($to))->days>89) throw new DomainException('Selecciona hasta 90 días, desde tu fecha de inicio y sin fechas futuras.');
@@ -57,7 +58,7 @@ function absence_decision_action(array $actor): void {
         query('UPDATE ch_absences SET status=?,reviewed_by=?,review_note=?,reviewed_at=?,revision=revision+1,updated_at=? WHERE id=?',[$decision,$actor['id'],$reason,utc_now(),utc_now(),$id]);
         audit((int)$actor['id'],'absence_'.$decision,'absence',$id,$before,row('SELECT * FROM ch_absences WHERE id=?',[$id]),$reason); db()->commit();
     } catch(Throwable $e) { if(db()->inTransaction()) db()->rollBack(); throw $e; }
-    flash('Solicitud '.strtolower(absence_status($decision)).'. La meta semanal se mantiene.'); go('index.php?page='.($decision==='cancelled'?'absences':'requests'));
+    flash('Solicitud '.strtolower(absence_status($decision)).'. La meta se mantiene y las aprobadas cubren el horario como horas justificadas.'); go('index.php?page='.($decision==='cancelled'?'absences':'requests'));
 }
 function map_view(float $lat,float $lng,string $label): void {
     if(!is_finite($lat)||!is_finite($lng)||abs($lat)>90||abs($lng)>180) return;

@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__.'/security.php';
 
 function e(mixed $value): string { return htmlspecialchars((string)$value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); }
 function utc_now(): string { return gmdate('Y-m-d H:i:s'); }
@@ -56,6 +57,7 @@ function require_role(array $user, array $roles): void { if(!in_array($user['rol
 function clean_user(array $u): array { unset($u['password_hash'],$u['session_version']); return $u; }
 function audit(?int $actor,string $action,string $entity,string|int $id, mixed $before,mixed $after,string $reason): void {
     query('INSERT INTO ch_audit(actor_id,action,entity,entity_id,before_json,after_json,reason,created_at) VALUES(?,?,?,?,?,?,?,?)',[$actor,$action,$entity,(string)$id,$before===null?null:json_encode($before,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR),$after===null?null:json_encode($after,JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR),$reason,utc_now()]);
+    record_request_context((int)db()->lastInsertId());
 }
 function default_days(): array { return ['1'=>['08:00','17:00'],'2'=>['08:00','17:00'],'3'=>['08:00','17:00'],'4'=>['08:00','17:00'],'5'=>['08:00','16:00']]; }
 function duration_minutes(?string $in,?string $out): int { return $in && $out ? max(0,(int)floor((strtotime($out.' UTC')-strtotime($in.' UTC'))/60)) : 0; }
