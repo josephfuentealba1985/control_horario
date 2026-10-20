@@ -4,22 +4,22 @@ Aplicación PWA de asistencia para una sola empresa o institución. PHP nativo, 
 
 ## Instalación desde el navegador
 
-1. En el panel de tu hosting, selecciona **PHP 8.2** y habilita **PDO MySQL** e **iconv** si no están activos. El instalador comprueba estos requisitos. No necesita la extensión ZIP para exportar Excel.
+1. En el panel de tu hosting, selecciona **PHP 8.2** y habilita **PDO MySQL**, **iconv**, **cURL** y **OpenSSL** si no están activos. El instalador comprueba estos requisitos. No necesita la extensión ZIP para exportar Excel.
 2. Crea una **base de datos vacía** MariaDB/MySQL y un usuario con permisos sobre ella. Anota el servidor, puerto, nombre de base, usuario y contraseña. Estos datos no son los del administrador de la aplicación.
 3. Sube **el contenido de esta carpeta**, incluidos `.htaccess` y las carpetas `app` y `assets`, al directorio público elegido. Puede ser la raíz del dominio o una subcarpeta, por ejemplo `public_html/asistencia`.
 4. Comprueba que el dominio tenga HTTPS y abre `https://tu-dominio/asistencia/`. Si subiste los archivos a la raíz, abre directamente el dominio. No abras los archivos PHP haciendo doble clic en Windows.
-5. Desde el administrador de archivos del hosting, abre **`clave-instalacion.php`** y copia el texto entre comillas después de `return`. Ingrésalo como **clave de instalación**. Esta clave protege la creación inicial del administrador; no se muestra al visitar el archivo por web.
+5. Regístrate en https://loopers.cl/proyectos/registro.php, confirma tu correo y genera una clave gratuita para esta instalación. Introdúcela en el instalador. Cada clave se vincula a una instalación y su dirección web. El servidor necesita acceso HTTPS saliente a loopers.cl para este paso.
 6. Completa los datos de MySQL, empresa, zona horaria, nombre, RUT y contraseña del primer administrador. Pulsa **Instalar y crear administrador**.
 7. Inicia sesión. En **Personas**, crea las cuentas y asigna sus horarios. En **Configuración**, registra los feriados que aplican a la institución.
-8. Cuando la instalación termine, puedes eliminar `install.php` y `clave-instalacion.php` desde el panel. El instalador ya queda bloqueado al existir `config.php`. Conserva `config.php`: contiene la conexión privada a la base.
+8. Cuando la instalación termine, puedes eliminar `install.php` y `clave-instalacion.php` desde el panel. El instalador ya queda bloqueado al existir `config.php`. Conserva `config.php` y `activation-state.php`: contienen la conexión privada y la identidad de instalación. No los publiques.
 
 No hay una contraseña predeterminada ni cuentas de demostración en el paquete. El primer administrador se crea durante la instalación.
 
 ### Permisos de archivos
 
-El proceso PHP necesita escribir `config.php` una sola vez durante la instalación. Utiliza los permisos habituales de tu hosting; no es necesario conceder escritura pública total. Luego puedes retirar la escritura del directorio de la aplicación. Las operaciones diarias se guardan en la base de datos, no en archivos.
+El proceso PHP necesita escribir `config.php` y `activation-state.php` durante la instalación. Utiliza los permisos habituales de tu hosting; no es necesario conceder escritura pública total. Luego puedes retirar la escritura del directorio de la aplicación. Las operaciones diarias se guardan en la base de datos, no en archivos.
 
-Si aparece un error 500 antes del instalador en un hosting Apache, revisa su registro de errores: algunos proveedores restringen `Options -Indexes`. En ese caso, elimina sólo esa línea de `.htaccess` y deshabilita el listado de directorios desde el panel. Las reglas incluidas están pensadas para Apache 2.4/LiteSpeed. En Nginx, solicita al proveedor bloquear `/app/`, `config.php`, `clave-instalacion.php` y archivos de respaldo/documentación. No se necesitan reglas de reescritura de URLs.
+Si aparece un error 500 antes del instalador en un hosting Apache, revisa su registro de errores: algunos proveedores restringen `Options -Indexes`. En ese caso, elimina sólo esa línea de `.htaccess` y deshabilita el listado de directorios desde el panel. Las reglas incluidas están pensadas para Apache 2.4/LiteSpeed. En Nginx, solicita al proveedor bloquear `/app/`, `config.php`, `clave-instalacion.php`, `activation-*.php` y archivos de respaldo/documentación. No se necesitan reglas de reescritura de URLs.
 
 Si utilizas un proxy/CDN que termina HTTPS, configura en el hosting la detección fiable de HTTPS. La aplicación no confía automáticamente en cabeceras de proxy enviadas por el cliente. Mantén la conexión HTTPS también entre el proxy y el hosting.
 
@@ -133,3 +133,9 @@ Marcado prioritario y compacto en móvil; consulta de las ubicaciones propias de
 ## Actualización 1.8.0 · Cercos GPS
 
 Cercos poligonales en Configuración y asignación individual en Gestión de persona. Sin cercos se permite marcar en cualquier lugar; con cercos se valida entrada y salida en el servidor. Incluye precisión máxima configurable, trazabilidad y edición de contornos. Requiere ejecutar `update.php` como administrador después de subir los archivos. 45 comprobaciones satisfactorias y revisión visual del editor. Consulta ACTUALIZACION-1.8.md.
+
+## Licencia y soporte
+
+Código bajo licencia MIT; consulta LICENSE. El registro corresponde al instalador oficial y no limita las libertades de la licencia. El uso es gratuito. LOOPERS ofrece instalación, capacitación y soporte opcionales por cotización: contacto@loopers.cl.
+
+No hay consultas de licencia durante el marcado o el inicio de sesión. Las instalaciones anteriores conservan su funcionamiento. Para cambiar de dirección, respalda archivos privados y base, solicita una clave de reemplazo en el portal y vincúlala desde Configuración como administrador. El reemplazo no migra datos ni desactiva remotamente copias anteriores.

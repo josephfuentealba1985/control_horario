@@ -1,6 +1,6 @@
 DirectoryIndex index.php
 Options -Indexes
-<FilesMatch "^(config|clave-instalacion)\.php$">
+<FilesMatch "^(config|clave-instalacion|activation-service|activation-state(?:\.[a-f0-9]+)?)\.php$">
     Require all denied
 </FilesMatch>
 <FilesMatch "\.(sql|log|ini|bak|zip|md)$">

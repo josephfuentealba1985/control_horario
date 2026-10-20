@@ -2,3 +2,6 @@
 *.log
 *.bak
 *.zip
+
+/activation-*.php
+/clave-instalacion.php
