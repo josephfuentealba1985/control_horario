@@ -10,5 +10,6 @@ return [
 "CREATE TABLE IF NOT EXISTS ch_audit (id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, actor_id INT UNSIGNED NULL, action VARCHAR(60) NOT NULL, entity VARCHAR(60) NOT NULL, entity_id VARCHAR(60) NOT NULL, before_json LONGTEXT NULL, after_json LONGTEXT NULL, reason VARCHAR(1000) NOT NULL, created_at DATETIME NOT NULL, INDEX entity_idx(entity,entity_id), CONSTRAINT audit_actor FOREIGN KEY(actor_id) REFERENCES ch_users(id)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
 "CREATE TABLE IF NOT EXISTS ch_login_limits (bucket VARCHAR(64) PRIMARY KEY, attempts INT NOT NULL DEFAULT 0, window_start DATETIME NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
 ...(require __DIR__.'/feature-schema.php'),
-...(require __DIR__.'/security-schema.php')
+...(require __DIR__.'/security-schema.php'),
+...(require __DIR__.'/geofence-schema.php')
 ];

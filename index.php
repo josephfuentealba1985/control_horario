@@ -8,6 +8,7 @@ require __DIR__.'/app/views.php';
 require __DIR__.'/app/import.php';
 require __DIR__.'/app/feature-views.php';
 require __DIR__.'/app/management-absence.php';
+require __DIR__.'/app/geofence-views.php';
 $user=current_user();
 $home=$user && $user['role']!=='user'?'overview':'dashboard';
 $page=is_string($_GET['page']??null)?$_GET['page']:$home;
@@ -25,7 +26,7 @@ if($_SERVER['REQUEST_METHOD']==='POST') {
             header('Content-Type: application/json; charset=utf-8'); echo json_encode(['token'=>$_SESSION['punch_challenge']['token']]); exit;
         }
         match($action) {
-            'coordinates'=>coordinates_action($user), 'punch'=>punch_action($user), 'correct'=>correction_action($user), 'profile'=>profile_action($user),
+            'geofence'=>geofence_action($user), 'geofence_assign'=>geofence_assign_action($user), 'coordinates'=>coordinates_action($user), 'punch'=>punch_action($user), 'correct'=>correction_action($user), 'profile'=>profile_action($user),
             'user'=>user_action($user), 'schedule'=>schedule_action($user), 'reset'=>reset_action($user),
             'settings'=>settings_action($user), 'holiday'=>holiday_action($user), 'remove_holiday'=>holiday_action($user,true),
             'import_preview'=>import_preview_action($user), 'import_confirm'=>import_confirm_action($user),
@@ -43,15 +44,15 @@ if($user['must_change']) $page='profile';
 $allowed=$user['role']==='user'?['dashboard','history','profile','absences','locations']:['profile'];
 if(in_array($user['role'],['admin','analyst'],true)) $allowed=[...$allowed,'overview','reports','edit','requests'];
 if($user['role']==='auditor') $allowed=[...$allowed,'overview','reports','edit','requests','audit'];
-if($user['role']==='admin') $allowed=[...$allowed,'users','user','settings','audit','import'];
+if($user['role']==='admin') $allowed=[...$allowed,'users','user','settings','audit','import','geofences'];
 if(!in_array($page,$allowed,true)) { http_response_code(403); flash('No tienes acceso a esta sección.','error'); $page=$home; }
 page_start($user,$page);
-if($user['role']==='admin' && !security_ready()) echo '<div class="notice warning">Hay nuevas funciones disponibles. <a href="update.php">Actualizar sistema</a> para habilitar el perfil Auditor y el registro de IP y dispositivo, conservando los registros actuales.</div>';
+if($user['role']==='admin' && !geofences_ready()) echo '<div class="notice warning">Hay nuevas funciones disponibles. <a href="update.php">Actualizar sistema</a> para habilitar los cercos GPS, conservando los registros actuales.</div>';
 try {
     match($page) {
         'dashboard'=>dashboard_view($user), 'history','reports'=>reports_view($user,$page), 'overview'=>overview_view(),
         'locations'=>user_locations_view($user), 'profile'=>profile_view($user), 'edit'=>edit_view($user), 'users'=>users_view(), 'user'=>user_view(),
-        'settings'=>settings_view(), 'audit'=>audit_view(),
+        'geofences'=>geofences_view(), 'settings'=>settings_view(), 'audit'=>audit_view(),
         'import'=>import_view($user),'absences'=>absences_view($user),'requests'=>absences_view($user,true),default=>null
     };
 } catch(DomainException $error) { echo '<section class="panel"><h2>Revisa la solicitud</h2><p>'.e($error->getMessage()).'</p><a href="index.php">Volver al inicio</a></section>'; }

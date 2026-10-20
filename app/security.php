@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-const APP_VERSION='1.7.0';
+const APP_VERSION='1.8.0';
 
 function security_ready(): bool {
     // Do not cache: the browser updater may enable this within the same request.

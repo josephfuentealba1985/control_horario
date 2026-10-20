@@ -43,7 +43,10 @@ function punch_action(array $user): void {
     if(!$challenge || time()-$challenge['issued']>120 || !hash_equals($challenge['token'],text_input('challenge',64,true))) throw new DomainException('La solicitud de ubicación caducó. Vuelve a intentar el marcado.');
     db()->beginTransaction();
     try {
+        // Serialize with fence edits/assignments so the committed punch uses one policy.
+        row('SELECT id FROM ch_settings WHERE id=1 FOR UPDATE');
         row('SELECT id FROM ch_users WHERE id=? FOR UPDATE',[$user['id']]);
+        $fenceDecision=geo_validate_punch((int)$user['id'],$coords);
         $now=utc_now(); $date=local_time($now,'Y-m-d');
         if($date<$user['start_date']) throw new DomainException('Tu fecha de inicio todavía no ha llegado.');
         block_approved_absence((int)$user['id'],$date);
@@ -61,7 +64,7 @@ function punch_action(array $user): void {
             query('UPDATE ch_attendance SET clock_out=?,updated_at=?,revision=revision+1 WHERE id=?',[$now,$now,$id]);
         }
         query('INSERT INTO ch_evidence(attendance_id,kind,recorded_at,latitude,longitude,accuracy,comment) VALUES(?,?,?,?,?,?,?)',[$id,$kind,$now,$coords['latitude'],$coords['longitude'],$coords['accuracy'],$comment]);
-        audit((int)$user['id'],'punch_'.$kind,'attendance',$id,$a,row('SELECT * FROM ch_attendance WHERE id=?',[$id]),'Marcado en línea con ubicación');
+        audit((int)$user['id'],'punch_'.$kind,'attendance',$id,$a,array_merge(row('SELECT * FROM ch_attendance WHERE id=?',[$id]),['geofence_validation'=>$fenceDecision]),'Marcado en línea con ubicación');
         db()->commit(); unset($_SESSION['punch_challenge']);
     } catch(Throwable $e) { if(db()->inTransaction()) db()->rollBack(); throw $e; }
     flash($kind==='in'?'Tu ingreso quedó registrado.':'Tu salida quedó registrada.'); go();

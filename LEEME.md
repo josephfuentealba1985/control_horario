@@ -129,3 +129,7 @@ IP y datos del navegador en los nuevos marcados, perfil Auditor de consulta y ex
 ## Actualización 1.7.0
 
 Marcado prioritario y compacto en móvil; consulta de las ubicaciones propias de entrada y salida en Mi jornada y Mi historial. Nueve comprobaciones de integración satisfactorias y revisión móvil a 390 × 700. Consulta ACTUALIZACION-1.7.md.
+
+## Actualización 1.8.0 · Cercos GPS
+
+Cercos poligonales en Configuración y asignación individual en Gestión de persona. Sin cercos se permite marcar en cualquier lugar; con cercos se valida entrada y salida en el servidor. Incluye precisión máxima configurable, trazabilidad y edición de contornos. Requiere ejecutar `update.php` como administrador después de subir los archivos. 45 comprobaciones satisfactorias y revisión visual del editor. Consulta ACTUALIZACION-1.8.md.
