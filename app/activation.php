@@ -11,7 +11,7 @@ function activation_service(): string {
         if(($c['development']??false) && in_array($p['host']??'',['127.0.0.1','localhost'],true)
             && in_array($_SERVER['REMOTE_ADDR']??'',['127.0.0.1','::1'],true)) return $url;
     }
-    return 'https://loopers.cl/proyectos/api.php';
+    return 'https://www.loopers.cl/proyectos/api.php';
 }
 function activation_url(): string {
     $host=strtolower($_SERVER['HTTP_HOST']??'');
