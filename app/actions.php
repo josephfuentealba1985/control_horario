@@ -67,7 +67,11 @@ function punch_action(array $user): void {
         audit((int)$user['id'],'punch_'.$kind,'attendance',$id,$a,array_merge(row('SELECT * FROM ch_attendance WHERE id=?',[$id]),['geofence_validation'=>$fenceDecision]),'Marcado en línea con ubicación');
         db()->commit(); unset($_SESSION['punch_challenge']);
     } catch(Throwable $e) { if(db()->inTransaction()) db()->rollBack(); throw $e; }
-    flash($kind==='in'?'Tu ingreso quedó registrado.':'Tu salida quedó registrada.'); go();
+    $mailStatus=mail_receipt($user,$kind,$now,$id);
+    $message=$kind==='in'?'Tu ingreso quedó registrado.':'Tu salida quedó registrada.';
+    if($mailStatus==='missing_email')$message.=' No se envió el correo: completa tu correo en Mi perfil.';
+    elseif($mailStatus==='failed')$message.=' No se pudo enviar la confirmación por correo. Tu marcado está guardado; no necesitas repetirlo.';
+    flash($message,in_array($mailStatus,['failed','missing_email'],true)?'warning':'success'); go();
 }
 
 function correction_action(array $actor): void {

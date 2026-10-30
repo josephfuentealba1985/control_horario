@@ -139,3 +139,7 @@ Cercos poligonales en Configuración y asignación individual en Gestión de per
 Código bajo licencia MIT; consulta LICENSE. El registro corresponde al instalador oficial y no limita las libertades de la licencia. El uso es gratuito. LOOPERS ofrece instalación, capacitación y soporte opcionales por cotización: contacto@loopers.cl.
 
 No hay consultas de licencia durante el marcado o el inicio de sesión. Las instalaciones anteriores conservan su funcionamiento. Para cambiar de dirección, respalda archivos privados y base, solicita una clave de reemplazo en el portal y vincúlala desde Configuración como administrador. El reemplazo no migra datos ni desactiva remotamente copias anteriores.
+
+## Confirmaciones por correo (1.10)
+
+El administrador puede configurar SMTP seguro y enviar una prueba desde Configuración. Al activar la función, cada usuario recibe confirmaciones de entrada y salida en el correo de su perfil. El marcado se conserva si el correo falla. Consulta ACTUALIZACION-1.10.md para requisitos y puesta en marcha. Conserva mail-config.php como archivo privado y exclúyelo de distribuciones y GitHub.

@@ -3,6 +3,7 @@ declare(strict_types=1);
 require __DIR__.'/app/bootstrap.php';
 if(!is_file(__DIR__.'/config.php')) go('install.php');
 require __DIR__.'/app/actions.php';
+require __DIR__.'/app/mail.php';
 require __DIR__.'/app/activation.php';
 require __DIR__.'/app/reports.php';
 require __DIR__.'/app/views.php';
@@ -29,7 +30,7 @@ if($_SERVER['REQUEST_METHOD']==='POST') {
         match($action) {
             'geofence'=>geofence_action($user), 'geofence_assign'=>geofence_assign_action($user), 'coordinates'=>coordinates_action($user), 'punch'=>punch_action($user), 'correct'=>correction_action($user), 'profile'=>profile_action($user),
             'user'=>user_action($user), 'schedule'=>schedule_action($user), 'reset'=>reset_action($user),
-            'activate_installation'=>activation_action($user), 'settings'=>settings_action($user), 'holiday'=>holiday_action($user), 'remove_holiday'=>holiday_action($user,true),
+            'mail_settings'=>mail_settings_action($user), 'mail_test'=>mail_test_action($user), 'activate_installation'=>activation_action($user), 'settings'=>settings_action($user), 'holiday'=>holiday_action($user), 'remove_holiday'=>holiday_action($user,true),
             'import_preview'=>import_preview_action($user), 'import_confirm'=>import_confirm_action($user),
             'management_absence'=>management_absence_action($user), 'absence_request'=>absence_request_action($user), 'absence_decision'=>absence_decision_action($user),
             default=>throw new DomainException('Acción no válida.')
@@ -53,7 +54,7 @@ try {
     match($page) {
         'dashboard'=>dashboard_view($user), 'history','reports'=>reports_view($user,$page), 'overview'=>overview_view(),
         'locations'=>user_locations_view($user), 'profile'=>profile_view($user), 'edit'=>edit_view($user), 'users'=>users_view(), 'user'=>user_view(),
-        'geofences'=>geofences_view(), 'settings'=>(function(){settings_view();activation_view();})(), 'audit'=>audit_view(),
+        'geofences'=>geofences_view(), 'settings'=>(function(){settings_view();mail_settings_view();activation_view();})(), 'audit'=>audit_view(),
         'import'=>import_view($user),'absences'=>absences_view($user),'requests'=>absences_view($user,true),default=>null
     };
 } catch(DomainException $error) { echo '<section class="panel"><h2>Revisa la solicitud</h2><p>'.e($error->getMessage()).'</p><a href="index.php">Volver al inicio</a></section>'; }
